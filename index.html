@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="HTTP Status Code Quiz - Gamified technical assessment for web developers">
+    <meta name="theme-color" content="#0a0a0f">
+    <title>HTTP Status Code Quiz | Dev Challenge</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127919;</text></svg>">
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+
+    <main class="container">
+        <header class="header">
+            <h1 class="logo">HTTP STATUS QUIZ</h1>
+            <p class="tagline">Test Your Web Protocol Knowledge</p>
+        </header>
+
+        <section id="startScreen" class="screen active">
+            <div class="card start-card">
+                <h2>&#127919; Ready to Debug Reality?</h2>
+                <p>You're the server. Users are sending requests. Can you respond with the correct status code?</p>
+                <div class="features">
+                    <div class="feature"><div class="feature-icon">&#9889;</div><span>Time Pressure</span></div>
+                    <div class="feature"><div class="feature-icon">&#127942;</div><span>Leaderboard</span></div>
+                    <div class="feature"><div class="feature-icon">&#128218;</div><span>20 Scenarios</span></div>
+                </div>
+                <button class="btn" onclick="game.start()">Start Challenge</button>
+            </div>
+        </section>
+
+        <section id="gameScreen" class="screen">
+            <div class="game-header">
+                <div class="stat">
+                    <div class="stat-label">Question</div>
+                    <div class="stat-value"><span id="currentQ">1</span>/<span id="totalQ">20</span></div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Time</div>
+                    <div class="stat-value timer" id="timer">15</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Score</div>
+                    <div class="stat-value score" id="score">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Streak</div>
+                    <div class="stat-value streak" id="streak">0</div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 5%"></div>
+            </div>
+
+            <div class="scenario-card">
+                <div class="scenario-label">Server Scenario</div>
+                <div class="scenario-text" id="scenarioText">Loading...</div>
+            </div>
+
+            <div class="options-grid" id="optionsGrid"></div>
+        </section>
+
+        <section id="resultsScreen" class="screen">
+            <div class="card results-card">
+                <h2>&#127881; Challenge Complete!</h2>
+                <div class="final-score" id="finalScore">0</div>
+                <div class="result-message" id="resultMessage">Calculating results...</div>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-box-value" id="correctAnswers">0</div>
+                        <div class="stat-box-label">Correct</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-value" id="accuracy">0%</div>
+                        <div class="stat-box-label">Accuracy</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-value" id="maxStreak">0</div>
+                        <div class="stat-box-label">Best Streak</div>
+                    </div>
+                </div>
+
+                <input type="text" class="name-input" id="playerName" placeholder="Enter your name" maxlength="20">
+                <br>
+                <button class="btn" id="saveScoreButton" onclick="savePlayerScore(this)">Save to Leaderboard</button>
+                <button class="btn btn-secondary" onclick="game.start()">Play Again</button>
+            </div>
+
+            <aside class="leaderboard">
+                <h3>&#127942; Leaderboard</h3>
+                <ol class="leaderboard-list" id="leaderboardList"></ol>
+            </aside>
+        </section>
+    </main>
+
+    <div id="feedback" class="feedback">
+        <div class="feedback-icon" id="feedbackIcon">OK</div>
+        <h3 id="feedbackTitle">Correct!</h3>
+        <p id="feedbackText">Great job!</p>
+        <button class="btn" onclick="game.nextQuestion()">Continue</button>
+    </div>
+
+    <script src="src/js/data.js"></script>
+    <script src="src/js/leaderboard.js"></script>
+    <script src="src/js/ui.js"></script>
+    <script src="src/js/game.js"></script>
+    <script>
+        const ui = new GameUI();
+        const leaderboard = new LeaderboardManager();
+        const scoring = new ScoringEngine();
+        const game = new HTTPQuizGame(QUESTIONS, ui, leaderboard, scoring);
+
+        function savePlayerScore(button) {
+            const name = document.getElementById('playerName').value.trim();
+            if (!name) {
+                alert('Please enter your name!');
+                return;
+            }
+
+            const rank = game.saveScore(name);
+            button.textContent = rank >= 0 ? `Saved! Rank #${rank + 1}` : 'Saved!';
+            button.disabled = true;
+            document.getElementById('playerName').style.display = 'none';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && document.getElementById('feedback').classList.contains('show')) {
+                game.nextQuestion();
+            }
+        });
+
+        window.addEventListener('beforeunload', (e) => {
+            if (document.getElementById('gameScreen').classList.contains('active')) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+</body>
+</html>
