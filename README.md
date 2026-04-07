@@ -14,7 +14,7 @@ A gamified technical assessment for web developers to test their knowledge of HT
 ## Quick Start
 
 1. Clone the repository:
-   git clone https://github.com/yourusername/http-status-quiz.git
+   git clone [https://github.com/yourusername/http-status-quiz.git](https://github.com/roar-k5/http-status-quiz.git)
    cd http-status-quiz
 
 2. Open index.html in your browser:
