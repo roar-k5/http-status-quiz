@@ -36,7 +36,6 @@ http-status-quiz/
 ├── game.js             # Core game logic & state management
 ├── ui.js               # UI rendering & DOM manipulation
 ├── leaderboard.js      # LocalStorage leaderboard system
-└── docs/               # Documentation (optional)
 
 ## How to Play
 
